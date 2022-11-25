@@ -3,12 +3,12 @@ const Users = require('./users')
 const Jadwal = require('./jadwal')
 
 Users.hasMany(Jadwal, { 
-  as: 'jadwal',
-  foreignKey: 'id_users',
+  as: 'users',
+  foreignKey: 'id',
 })
 
 Jadwal.belongsTo(Users, {
-  as: 'users',
+  as: 'jadwal',
   foreignKey: 'id_users',
 })
 

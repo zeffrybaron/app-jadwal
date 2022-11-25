@@ -18,24 +18,22 @@ module.exports = {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       },
+      name: {
+        type: Sequelize.STRING,
+      },
       day: {
         type: Sequelize.ENUM,
         values: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
       },
       time_start: {
-        type: Sequelize.DATE,
-        default: new Date(),
+        type: Sequelize.TEXT,
       },
       time_finish: {
-        type: Sequelize.DATE,
-        default: new Date(),
+        type: Sequelize.TEXT,
       },
       quota: {
         type: Sequelize.INTEGER,
         allowNull: false,
-      },
-      status: {
-        type: Sequelize.BOOLEAN,
       },
       date: {
         type: Sequelize.DATE,

@@ -1,61 +1,74 @@
 const { sequelize, Jadwal, Users } = require('../models')
-const { getAttributes } = require('../models/users')
 
-const getJadwal = async(req, res, next) => {
-    try {
-        const resJadwal = await Jadwal.findAll()
-        if (resJadwal) {
-            return res.status(200).json({
-                message: 'success get jadwal',
-                data: resJadwal,
-            })
-        } else {
-            throw { code: 404, message: 'Jadwal not found' }
-        }
-    } catch (error) {
-        next(error)
-    }
-}
 
 const postJadwal = async(req, res, next) => {
-    
     try {
-        const { ...createJadwal } = req.body
-        const findMyUser = await Users.findAll({
-            where: {
-                id_users: req.id_users
+        const {
+            id_users,
+            day,
+            time_start,
+            time_finish,
+            quota,
+            // date
+        } = req.body
+        const findUser = await Users.findByPk(req.body.id_users)
+        if (!findUser) {
+            throw {
+                code: 404,
+                message: 'User not found'
             }
-          })
+        }
 
-          if(findMyUser.length == 0) {
-            return res.status(404).json({
-                message: 'User not exist'
-            })
-          }
+        // METODE 1
+        // function getDatesInRange(startDate, endDate) {
+        //     const date = new Date(startDate.getTime());
+          
+        //     const dates = [];
+          
+        //     while (date <= endDate) {
+        //       dates.push(new Date(date));
+        //       date.setDate(date.getDate() + 1);
+        //     }
+          
+        //     return dates;
+        //   }
+          
+        //   const d1 = new Date();
+        //   const d2 = new Date();
+          
+        // const dateRange = (getDatesInRange(d1, d2));
+
+        // METODE 2
+        // Date.prototype.addDays = function(days) {
+        //     let date = new Date(this.valueOf())
+        //     date.setDate(date.getDate() + days)
+        //     return date;
+        // }
     
-    function getDatesInRange(startDate, endDate) {
-        const date = new Date(startDate.getTime());
-      
-        
-        const dates = [];
-
-        while (date <= endDate) {
-            dates.push(new Date(date));
-            date.setDate(date.getDate() + 1);
-        }
-
-        return dates;
-        }
-      const d1 = new Date('2022-11-18');
-      const d2 = new Date('2022-12-24');
-      
-    //   console.log(getDatesInRange(d1, d2));
-
+        // function getDates(startDate, stopDate) {
+        //     let dateArray = new Array()
+        //     let currentDate = startDate
+        //     while (currentDate <= stopDate) {
+        //         dateArray.push(new Date (currentDate))
+        //         currentDate = currentDate.addDays(1)
+        //     }
+        //     return dateArray;
+        // }
+        // let dateArray = getDates(new Date(), (new Date()).addDays(2));
+        // for (i = 0; i < dateArray.length; i ++ ) {
+        //     alert (dateArray[i]);
+          
+          
         await sequelize.transaction(async(trx) => {
-          insertJadwal = await Jadwal.create({
-                ...createJadwal,
-                id_users: req.id_users,
-                date: getDatesInRange(d1,d2)
+         insertJadwal = await Jadwal.create(
+            {
+                id_users: id_users,
+                name: findUser.name,
+                day,
+                time_start,
+                time_finish,
+                quota,
+                // date,
             }, {
                 transaction: trx
 
@@ -71,22 +84,46 @@ const postJadwal = async(req, res, next) => {
     }
 }
 
-const getJadwalId = async(req, res, next) => {
-    const { id } = req.params
-
+const getJadwal = async(req, res, next) => {
     try {
-        const resJadwal = await Jadwal.findOne({ where: { id: id } })
-        if (resJadwal) {
-            return res.status(200).json({
-                message: `success get jadwal by id ${id}`,
-                data: resJadwal,
+        const findAll = await Jadwal.findAll({
+            attributes: ['id', 'id_users', 'name', 'day','time_start', 'time_finish', 'quota', 'date'],
+        })
+
+        if (findAll) {
+            return res.status(200).json ({
+                data: {
+                    findAll,
+                    status: true},
             })
-        } else {
-            throw { code: 404, message: 'Jadwal not found' }
-        }
+        }       
+        return res.status(404).json({
+            status: false,
+            message: 'Jadwal not found'
+        })
     } catch (error) {
         next(error)
     }
+}
+
+const getJadwalId = async(req, res, next) => {
+
+    id = req.params.id
+    const findOne = await Jadwal.findByPk(id, {
+        attributes: ['id_users', 'name', 'day','time_start', 'time_finish', 'quota', 'date'],
+    })
+
+    if (findOne) {
+        return res.status(200).json({
+            status: true,
+            data: findOne,
+        })
+    }
+
+    return res.status(404).json({
+        status: false,
+        message: 'User not found',
+    })
 }
 
 const updateJadwal = async(req, res, next) => {
@@ -148,5 +185,5 @@ module.exports = {
     getJadwal,
     getJadwalId,
     updateJadwal,
-    deleteJadwal,
+    deleteJadwal
 }

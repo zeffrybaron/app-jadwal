@@ -19,24 +19,22 @@ Jadwal.init({
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     },
+    name: {
+        type: DataTypes.STRING,
+    },
     day: {
         type: DataTypes.ENUM,
         values: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
     },
     time_start: {
-        type: DataTypes.DATE,
-        default: new Date(),
+        type: DataTypes.TEXT
     },
     time_finish: {
-        type: DataTypes.DATE,
-        default: new Date(),
+        type: DataTypes.TEXT
     },
     quota: {
         type: DataTypes.INTEGER,
         allowNull: false,
-    },
-    status: {
-        type: DataTypes.BOOLEAN,
     },
     date: {
         type: DataTypes.DATE,
