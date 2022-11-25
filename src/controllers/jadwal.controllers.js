@@ -9,7 +9,7 @@ const postJadwal = async(req, res, next) => {
             time_start,
             time_finish,
             quota,
-            // date
+            date
         } = req.body
         const findUser = await Users.findByPk(req.body.id_users)
         if (!findUser) {
@@ -33,31 +33,32 @@ const postJadwal = async(req, res, next) => {
         //     return dates;
         //   }
           
-        //   const d1 = new Date();
-        //   const d2 = new Date();
+        //   const d1 = new Date('2022-11-18');
+        //   const d2 = new Date('2022-12-18');
           
-        // const dateRange = (getDatesInRange(d1, d2));
+        // console.log(getDatesInRange(d1, d2));
 
-        // METODE 2
-        // Date.prototype.addDays = function(days) {
-        //     let date = new Date(this.valueOf())
-        //     date.setDate(date.getDate() + days)
-        //     return date;
-        // }
-    
-        // function getDates(startDate, stopDate) {
-        //     let dateArray = new Array()
-        //     let currentDate = startDate
-        //     while (currentDate <= stopDate) {
-        //         dateArray.push(new Date (currentDate))
-        //         currentDate = currentDate.addDays(1)
-        //     }
-        //     return dateArray;
-        // }
-        // let dateArray = getDates(new Date(), (new Date()).addDays(2));
-        // for (i = 0; i < dateArray.length; i ++ ) {
-        //     alert (dateArray[i]);
-          
+        // Returns an array of dates between the two dates
+        function getDates (startDate, endDate) {
+            const dates = []
+            let currentDate = startDate
+            const addDays = function (days) {
+            const date = new Date(this.valueOf())
+            date.setDate(date.getDate() + days)
+            return date
+            }
+            while (currentDate <= endDate) {
+            dates.push(currentDate)
+            currentDate = addDays.call(currentDate, 1)
+            }
+            return dates
+        }
+        
+        // Usage
+        const dates = getDates(new Date(2022, 11, 22), new Date(2012, 12, 01))
+        dates.forEach(function (date) {
+            console.log(date)
+        })
           
         await sequelize.transaction(async(trx) => {
          insertJadwal = await Jadwal.create(
@@ -68,7 +69,7 @@ const postJadwal = async(req, res, next) => {
                 time_start,
                 time_finish,
                 quota,
-                // date,
+                date: date
             }, {
                 transaction: trx
 
@@ -92,9 +93,9 @@ const getJadwal = async(req, res, next) => {
 
         if (findAll) {
             return res.status(200).json ({
-                data: {
-                    findAll,
-                    status: true},
+                status: true,
+                data: findAll,
+                    
             })
         }       
         return res.status(404).json({
