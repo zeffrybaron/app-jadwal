@@ -20,45 +20,24 @@ const postJadwal = async(req, res, next) => {
         }
 
         // METODE 1
-        // function getDatesInRange(startDate, endDate) {
-        //     const date = new Date(startDate.getTime());
+        function getDatesInRange(startDate, endDate) {
+            const date = new Date(startDate.getTime());
           
-        //     const dates = [];
+            const dates = [];
           
-        //     while (date <= endDate) {
-        //       dates.push(new Date(date));
-        //       date.setDate(date.getDate() + 1);
-        //     }
+            while (date <= endDate) {
+              dates.push(new Date(date));
+              date.setDate(date.getDate() + 1);
+            }
           
-        //     return dates;
-        //   }
+            return dates;
+          }
           
-        //   const d1 = new Date('2022-11-18');
-        //   const d2 = new Date('2022-12-18');
+          const d1 = new Date('2022-11-18');
+          const d2 = new Date('2022-12-18');
           
-        // console.log(getDatesInRange(d1, d2));
+        console.log(getDatesInRange(d1, d2))
 
-        // Returns an array of dates between the two dates
-        function getDates (startDate, endDate) {
-            const dates = []
-            let currentDate = startDate
-            const addDays = function (days) {
-            const date = new Date(this.valueOf())
-            date.setDate(date.getDate() + days)
-            return date
-            }
-            while (currentDate <= endDate) {
-            dates.push(currentDate)
-            currentDate = addDays.call(currentDate, 1)
-            }
-            return dates
-        }
-        
-        // Usage
-        const dates = getDates(new Date(2022, 11, 22), new Date(2012, 12, 01))
-        dates.forEach(function (date) {
-            console.log(date)
-        })
           
         await sequelize.transaction(async(trx) => {
          insertJadwal = await Jadwal.create(
@@ -69,7 +48,8 @@ const postJadwal = async(req, res, next) => {
                 time_start,
                 time_finish,
                 quota,
-                date: date
+                date: (getDatesInRange(d1,d2))
+                
             }, {
                 transaction: trx
 
